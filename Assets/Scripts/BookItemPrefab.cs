@@ -15,6 +15,7 @@ public class BookItemPrefab : MonoBehaviour
     private void Awake()
     {
         _libraryManager.OnBookStatusChanged += UpdateBookUI;
+        
 
         GetComponent<Button>().onClick.AddListener(OpenBorrowAndReturnPanel);
     }
@@ -35,6 +36,6 @@ public class BookItemPrefab : MonoBehaviour
 
     public void OpenBorrowAndReturnPanel()
     {
-        UIManager.Instance.OpenBorrowAndReturnPanel(book);
+        UIManager.Instance.OpenBorrowBookPanel(book);
     }
 }

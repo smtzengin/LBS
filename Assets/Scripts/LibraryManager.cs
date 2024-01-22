@@ -8,10 +8,13 @@ public class LibraryManager : MonoBehaviour
 {
     public List<Book> books = new List<Book>();
     public Action<Book> OnBookStatusChanged;
+    public Action<InventoryItem> OnInventoryChanged;
+    public Inventory inventory = new Inventory();
     private void Awake()
     {
         CreateJsonFile();
         LoadBooksFromJson();
+        inventory.LoadInventoryFromJson();
     }
     
     //Kitap ekleme işlemlerini gerçekleştirir.
@@ -38,17 +41,36 @@ public class LibraryManager : MonoBehaviour
         if(book.totalCopies > 0)
         {
             book.totalCopies--;
-
+            inventory.AddBookToInventory(book);
             SaveBooksToJson();
             OnBookStatusChanged?.Invoke(book);
+
+            UIManager.Instance.OpenInventoryPanel();
+            
         }
     }
 
     public void ReturnBook(Book book)
     {
-        book.totalCopies++;
-        SaveBooksToJson();
-        OnBookStatusChanged?.Invoke(book);
+        // Envantordan kitabı kaldır
+        inventory.RemoveBookFromInventory(book);
+
+        // Mevcut kitap listesindeki kitabı bul
+        Book existingBook = books.Find(existing => existing.title.Equals(book.title) && existing.ISBN.Equals(book.ISBN));
+
+        if (existingBook != null)
+        {
+            // Eğer varsa, mevcut kitabın totalCopies değerini artır
+            existingBook.totalCopies++;
+            SaveBooksToJson(); // Kitapları güncel JSON dosyaya kaydet
+            OnBookStatusChanged?.Invoke(existingBook);
+        }
+        else
+        {
+            Debug.LogError("İlgili kitap mevcut kitap listesinde bulunamadı!");
+        }
+
+        UIManager.Instance.OpenInventoryPanel();
     }
 
     //Kitabın ISBN veya ismine göre var olup olmadığını kontrol eden sorgu.

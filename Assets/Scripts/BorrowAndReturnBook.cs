@@ -12,12 +12,12 @@ public class BorrowAndReturnBook : MonoBehaviour
         book = selectedBook;
     }
 
-
     public void BorrowBook()
     {
         if (book != null)
         {
             libraryManager.BorrowBook(book);
+            this.gameObject.SetActive(false);
         }
     }
 
@@ -26,6 +26,7 @@ public class BorrowAndReturnBook : MonoBehaviour
         if (book != null)
         {
             libraryManager.ReturnBook(book);
+            this.gameObject.SetActive(false);
         }
     }
 }
