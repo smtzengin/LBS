@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+using System;
 
 public class BookItemPrefab : MonoBehaviour
 {
@@ -14,16 +15,16 @@ public class BookItemPrefab : MonoBehaviour
 
     private void Awake()
     {
+        Debug.Log("BookItemPrefab Awake");
         _libraryManager.OnBookStatusChanged += UpdateBookUI;
-        
-
-        GetComponent<Button>().onClick.AddListener(OpenBorrowAndReturnPanel);
     }
 
     //UI üzerinde güncelleme işlemlerini yapar
     public void UpdateBookUI(Book updatedBook)
     {
-        if (updatedBook == book)
+        Debug.Log($"UpdateBookUI Called - book: {book.title}, updatedBook: {updatedBook}");
+
+        if (updatedBook == book && IsBookInSearchResults(updatedBook))
         {
             Debug.Log($"Kitap güncellendi - Title: {updatedBook.title}, ISBN: {updatedBook.ISBN}, Total Copies: {updatedBook.totalCopies}");
 
@@ -33,9 +34,12 @@ public class BookItemPrefab : MonoBehaviour
             bookTotalCopies.text = updatedBook.totalCopies.ToString();
         }
     }
-
-    public void OpenBorrowAndReturnPanel()
+    private bool IsBookInSearchResults(Book bookToCheck)
+    {       
+        return bookToCheck.title.ToLower().Contains(UIManager.Instance.searchInputField.text.ToLower());
+    }
+    public void SetOnClickAction(Action action)
     {
-        UIManager.Instance.OpenBorrowBookPanel(book);
+        GetComponent<Button>().onClick.AddListener(() => action.Invoke());
     }
 }

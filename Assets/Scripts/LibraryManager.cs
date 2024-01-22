@@ -27,15 +27,15 @@ public class LibraryManager : MonoBehaviour
         {
             books.Add(newBook);
             SaveBooksToJson();
-            Debug.Log("Kitap Başarı ile eklendi!");
+            Debug.Log("Kitap Başarı ile eklendi!");            
         }
         else
-        {
-            //UI Warning text!
+        {            
             Debug.LogWarning("Bu isim veya ISBN numarasına ait bir kitap zaten mevcut!");
         }        
     }
 
+    //Kitap Ödünç Alma işlemlerini gerçekleştirir.
     public void BorrowBook(Book book)
     {
         if(book.totalCopies > 0)
@@ -44,25 +44,23 @@ public class LibraryManager : MonoBehaviour
             inventory.AddBookToInventory(book);
             SaveBooksToJson();
             OnBookStatusChanged?.Invoke(book);
-
             UIManager.Instance.OpenInventoryPanel();
             
         }
     }
 
+    //Kitap İade Etme İşlemlerini Gerçekleştirir.
     public void ReturnBook(Book book)
-    {
-        // Envantordan kitabı kaldır
+    {        
         inventory.RemoveBookFromInventory(book);
-
-        // Mevcut kitap listesindeki kitabı bul
+        
         Book existingBook = books.Find(existing => existing.title.Equals(book.title) && existing.ISBN.Equals(book.ISBN));
 
         if (existingBook != null)
         {
             // Eğer varsa, mevcut kitabın totalCopies değerini artır
             existingBook.totalCopies++;
-            SaveBooksToJson(); // Kitapları güncel JSON dosyaya kaydet
+            SaveBooksToJson(); 
             OnBookStatusChanged?.Invoke(existingBook);
         }
         else
@@ -91,7 +89,7 @@ public class LibraryManager : MonoBehaviour
         }
     }
 
-    //Kitap ekleme işlemini gerçekleştirir.
+    //veriye yazma işlemini gerçekleştirir.
     public void SaveBooksToJson()
     {
         string json = JsonUtility.ToJson(new BookList(books));

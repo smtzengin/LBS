@@ -22,9 +22,7 @@ public class Inventory
         InventoryItem existingItem = items.Find(item => item.book.title == book.title);
 
         if (existingItem != null)
-        {           
             existingItem.stack++;
-        }
         else
         {            
             InventoryItem newItem = new InventoryItem(book);
@@ -40,11 +38,8 @@ public class Inventory
         if (existingItem != null && existingItem.stack > 0)
         {
             existingItem.stack--;
-
             if (existingItem.stack == 0)
-            {
                 items.Remove(existingItem);
-            }
         }
         else
         {
@@ -70,9 +65,7 @@ public class Inventory
             Inventory loadedInventory = JsonUtility.FromJson<Inventory>(json);
 
             if (loadedInventory != null)
-            {
                 items = loadedInventory.items;
-            }
         }
     }
 }
